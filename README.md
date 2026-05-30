@@ -1,7 +1,11 @@
-
 # Contexto Acadêmico - Projeto de Extensão
 
 Este sistema está sendo desenvolvido como parte do Projeto de Extensão da Faculdade de Tecnologia de Campinas (Fatec Campinas), com o auxílio de professores de diversas disciplinas ao longo do curso de Análise e Desenvolvimento de Sistemas.
+
+# Equipe:
+
+**Larissa Escobar Garcia Silveira**
+**Wender Egídio Paraíso Silva Filho**
 
 # Sistema de Gestão Inteligente
 
@@ -29,8 +33,8 @@ O sistema foi estruturado em duas interfaces distintas:
 
 ## Tecnologias e Ferramentas
 
-* **Documentação:** Google Workspace (Docs).
-* **Interface (UI/UX):** Figma (Design Desktop e Mobile).
+* **Documentação:** Google Workspace (Docs) e Notion.
+* **Interface (UI/UX):** Página Protótipo em HTML (Design Desktop e Mobile).
 * **Gestão e Versionamento:** GitHub (Git).
 * **IA/Back-end:** Provedor de LLM e Banco de Dados em Nuvem (Previstos).
 
@@ -43,7 +47,7 @@ Para garantir a organização, rastreabilidade e integridade de todos os artefat
 ### 1. Estrutura de Diretórios
 Os arquivos são organizados por categoria de item de configuração:
 * `/docs`: Contém toda a documentação analítica e de requisitos do projeto (Identificação de Atores, Requisitos Funcionais/Não Funcionais, Narrativas, Casos de Uso e Manuais).
-* `/design`: Diretório reservado para as propostas de interface (Frames do Figma, protótipos de tela e mapeamento de navegação).
+* `/design`: Diretório reservado para as propostas de interface (Protótipos de tela e mapeamento de navegação).
 * `/src`: Diretório futuro destinado ao código-fonte da aplicação.
 
 ### 2. Política de Nomenclatura e Versionamento
@@ -53,5 +57,5 @@ Os arquivos são organizados por categoria de item de configuração:
 
 ### 3. Marcos de Entrega (Releases)
 Utilizamos o recurso de **Releases** do GitHub para determinar as versões finalizadas, ex:
-* **`v1.0`**: Entrega da Etapa 1 (Requisitos e Narrativas).
-* **`v2.0`**: Entrega da Etapa 2 (Interface no Figma).
+* **`v1.0`**: Entrega Inicial.
+* **`v2.0`**: Entrega de próximas fases.
