@@ -1,0 +1,2534 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ophicina - Dashboard de Gestão</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
+    />
+
+    <style>
+      /* =========================================
+       1. VARIÁVEIS, RESET E UTILS
+       ========================================= */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --sw: 210px;
+        --acc: #eab308;
+        --acc-l: #fef08a;
+        --acc-d: #854d0e;
+
+        --s: #ffffff;
+        --s2: #f8fafc;
+        --s3: #f1f5f9;
+        --t: #0f172a;
+        --t2: #475569;
+        --t3: #94a3b8;
+        --b: #e2e8f0;
+        --b2: #cbd5e1;
+        --r: 8px;
+        --rl: 16px;
+
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-card:
+          0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+        --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+        /* CORES DE STATUS (MODO CLARO) */
+        --c-aberta: #0284c7;
+        --bg-aberta: #e0f2fe;
+        --c-andamento: #d97706;
+        --bg-andamento: #fef3c7;
+        --c-curadoria: #c2410c;
+        --bg-curadoria: #ffedd5;
+        --c-finalizada: #15803d;
+        --bg-finalizada: #dcfce7;
+
+        --c-ok: #15803d;
+        --c-err: #b91c1c;
+        --c-warn: #a16207;
+        --c-info: #1d4ed8;
+        --bg-err: #fee2e2;
+        --hover-bg: #e2e8f0;
+
+        --font: "Inter", sans-serif;
+      }
+
+      body.dark-mode {
+        --s: #1e293b;
+        --s2: #334155;
+        --s3: #0f172a;
+        --t: #f8fafc;
+        --t2: #cbd5e1;
+        --t3: #64748b;
+        --b: #334155;
+        --b2: #475569;
+
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+        --shadow-card:
+          0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+        --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+
+        --acc-l: rgba(234, 179, 8, 0.15);
+        --acc-d: #fef08a;
+
+        /* CORES DE STATUS (MODO ESCURO) */
+        --c-aberta: #38bdf8;
+        --bg-aberta: rgba(56, 189, 248, 0.15);
+        --c-andamento: #fbbf24;
+        --bg-andamento: rgba(251, 191, 36, 0.15);
+        --c-curadoria: #fb923c;
+        --bg-curadoria: rgba(251, 146, 60, 0.15);
+        --c-finalizada: #4ade80;
+        --bg-finalizada: rgba(74, 222, 128, 0.15);
+
+        --c-ok: #4ade80;
+        --c-err: #f87171;
+        --c-warn: #fbbf24;
+        --c-info: #60a5fa;
+        --bg-err: rgba(248, 113, 113, 0.15);
+        --hover-bg: #475569;
+      }
+
+      body {
+        font-family: var(--font);
+        background: var(--s3);
+        color: var(--t);
+        transition:
+          background 0.3s,
+          color 0.3s;
+        overflow-x: hidden;
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+      }
+      .shell {
+        display: flex;
+        min-height: 100vh;
+      }
+      .flex-center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .btn-icon {
+        width: 36px;
+        height: 36px;
+        border: 1px solid var(--b2);
+        background: var(--s);
+        border-radius: var(--r);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: var(--shadow-sm);
+        color: var(--t2);
+      }
+      .btn-icon:hover {
+        background: var(--hover-bg);
+        color: var(--t);
+      }
+
+      /* MODO PRIVACIDADE */
+      body.privacy-on .kpi-val,
+      body.privacy-on .kanban-client,
+      body.privacy-on .kanban-plate,
+      body.privacy-on .tb-profile-name {
+        filter: blur(5px);
+        opacity: 0.8;
+        user-select: none;
+      }
+      body.privacy-on canvas {
+        filter: blur(8px);
+        opacity: 0.8;
+        pointer-events: none;
+      }
+      body.privacy-on .kpi-d span {
+        filter: blur(3px);
+      }
+
+      .c-up {
+        color: var(--c-ok);
+      }
+      .c-dn {
+        color: var(--c-err);
+      }
+      .c-neu {
+        color: var(--t3);
+      }
+
+      /* =========================================
+       2. SIDEBAR E HEADER
+       ========================================= */
+      .sb {
+        width: var(--sw);
+        background: var(--s);
+        border-right: 1px solid var(--b);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        z-index: 10;
+        transition:
+          background 0.3s,
+          border-color 0.3s;
+      }
+      .sb-brand {
+        padding: 20px 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .sb-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: var(--acc);
+        color: #0f172a;
+        font-size: 18px;
+        font-weight: 600;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .sb-nav {
+        flex: 1;
+        padding: 16px 0;
+      }
+      .sb-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 24px 14px 20px;
+        font-size: 13px;
+        color: var(--t2);
+        cursor: pointer;
+        border-left: 4px solid transparent;
+        transition: all 0.2s;
+        font-weight: 500;
+      }
+      .sb-item:hover {
+        color: var(--t);
+        background: var(--hover-bg);
+      }
+      .sb-item.active {
+        color: #b45309;
+        background: var(--acc-l);
+        font-weight: 600;
+        border-left-color: var(--acc);
+      }
+      body.dark-mode .sb-item.active {
+        color: #fef08a;
+        border-left-color: var(--acc);
+      }
+      .sb-item i {
+        font-size: 18px;
+      }
+
+      .sb-separator {
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          var(--b) 15%,
+          var(--b) 85%,
+          transparent 100%
+        );
+        margin: 0 0 8px 0;
+      }
+      .sb-bot {
+        padding: 0;
+      }
+      .sb-bot .sb-item:last-child {
+        padding-bottom: 24px;
+      }
+
+      .main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+      }
+      .tb {
+        height: 60px;
+        background: var(--s);
+        border-bottom: 1px solid var(--b);
+        display: flex;
+        align-items: center;
+        padding: 0 24px;
+        flex-shrink: 0;
+        z-index: 5;
+        transition: background 0.3s;
+      }
+
+      .tb-search {
+        max-width: 360px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--s2);
+        border: 1px solid var(--b2);
+        border-radius: 20px;
+        padding: 0 14px;
+        height: 38px;
+        transition: all 0.2s;
+        margin: 0 auto;
+      }
+      .tb-search:focus-within {
+        border-color: var(--acc);
+        background: var(--s);
+        box-shadow: 0 0 0 3px var(--acc-l);
+      }
+      body.dark-mode .tb-search:focus-within {
+        box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.3);
+      }
+      .tb-search input {
+        border: none;
+        background: transparent;
+        outline: none;
+        width: 100%;
+        font-size: 13px;
+        color: var(--t);
+        font-family: var(--font);
+      }
+
+      .tb-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .tb-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 4px 12px 4px 4px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .tb-profile:hover {
+        background: var(--hover-bg);
+      }
+
+      .flt-wrap {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .flt-container {
+        position: relative;
+        display: inline-block;
+      }
+      .flt-dd {
+        position: absolute;
+        top: calc(100% + 4px);
+        right: 0;
+        width: 100%;
+        min-width: 130px;
+        background: var(--s);
+        border: 1px solid var(--b);
+        border-radius: var(--r);
+        padding: 4px;
+        z-index: 10;
+        display: none;
+        box-shadow: var(--shadow-card);
+      }
+      .flt-dd.open {
+        display: block;
+      }
+      .flt-opt {
+        padding: 8px 12px;
+        font-size: 13px;
+        color: var(--t2);
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        font-weight: 500;
+        transition: background 0.2s;
+        text-align: center;
+      }
+      .flt-opt:hover {
+        background: var(--hover-bg);
+        color: var(--t);
+      }
+      .flt-opt.sel {
+        color: #b45309;
+        background: var(--acc-l);
+        font-weight: 600;
+      }
+      body.dark-mode .flt-opt.sel {
+        color: #fef08a;
+      }
+
+      /* =========================================
+       3. CONTEÚDOS DASHBOARD E KANBAN E DADOS
+       ========================================= */
+      .cnt {
+        padding: 24px;
+        overflow-y: auto;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .grid-kpi {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+      .grid-chart {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+      .grid-bot {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 20px;
+      }
+
+      .card {
+        background: var(--s);
+        border: 1px solid var(--b);
+        border-radius: var(--rl);
+        padding: 20px;
+        box-shadow: var(--shadow-card);
+        transition: background 0.3s;
+      }
+      .ch {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        font-weight: 600;
+        font-size: 15px;
+      }
+      .cs {
+        font-size: 12px;
+        color: var(--t3);
+        font-weight: 400;
+      }
+
+      .os-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: var(--r);
+        background: var(--s2);
+        margin-bottom: 8px;
+        border: 1px solid transparent;
+        transition: background 0.2s;
+      }
+      .os-item:hover {
+        background: var(--s);
+        border-color: var(--b);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .os-st {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 12px;
+        white-space: nowrap;
+      }
+      .s-a {
+        background: var(--bg-aberta);
+        color: var(--c-aberta);
+      }
+      .s-g {
+        background: var(--bg-andamento);
+        color: var(--c-andamento);
+      }
+      .s-r {
+        background: var(--bg-curadoria);
+        color: var(--c-curadoria);
+      }
+      .s-f {
+        background: var(--bg-finalizada);
+        color: var(--c-finalizada);
+      }
+
+      #emptyState {
+        display: none;
+        flex: 1;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--t3);
+      }
+
+      .os-action-bar {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 20px;
+      }
+      .btn-primary {
+        height: 38px;
+        padding: 0 16px;
+        background: var(--acc);
+        color: #0f172a;
+        border: 1px solid transparent;
+        border-radius: var(--r);
+        font-family: var(--font);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.2s;
+      }
+      .btn-primary:hover {
+        filter: brightness(0.95);
+        transform: translateY(-1px);
+      }
+
+      /* Kanban Area */
+      .kanban-board {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 16px;
+        flex: 1;
+        align-items: flex-start;
+      }
+      .kanban-col {
+        background: var(--s);
+        border: 1px solid var(--b);
+        border-radius: var(--rl);
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        box-shadow: var(--shadow-card);
+        transition: background 0.3s;
+        border-top: 4px solid var(--b);
+      }
+      .col-aberta {
+        border-top-color: var(--c-aberta);
+      }
+      .col-andamento {
+        border-top-color: var(--c-andamento);
+      }
+      .col-curadoria {
+        border-top-color: var(--c-curadoria);
+      }
+      .col-finalizada {
+        border-top-color: var(--c-finalizada);
+      }
+
+      .kanban-col-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--t);
+        padding-bottom: 8px;
+        border-bottom: 1px dashed var(--b);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .kanban-badge {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 10px;
+      }
+
+      .col-aberta .kanban-badge {
+        background: var(--bg-aberta);
+        color: var(--c-aberta);
+      }
+      .col-andamento .kanban-badge {
+        background: var(--bg-andamento);
+        color: var(--c-andamento);
+      }
+      .col-curadoria .kanban-badge {
+        background: var(--bg-curadoria);
+        color: var(--c-curadoria);
+      }
+      .col-finalizada .kanban-badge {
+        background: var(--bg-finalizada);
+        color: var(--c-finalizada);
+      }
+
+      .kanban-card {
+        background: var(--s2);
+        border: 1px solid var(--b);
+        border-radius: var(--r);
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s,
+          border-color 0.2s;
+      }
+      .kanban-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+        border-color: var(--acc);
+        background: var(--s);
+      }
+      .kanban-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+      }
+      .kanban-plate {
+        font-size: 10px;
+        font-weight: 600;
+        background: var(--s);
+        border: 1px solid var(--b);
+        border-radius: 4px;
+        padding: 2px 6px;
+        color: var(--t);
+        letter-spacing: 0.5px;
+      }
+      .kanban-client {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--t);
+      }
+      .kanban-desc {
+        font-size: 11px;
+        color: var(--t2);
+        font-weight: 500;
+        line-height: 1.4;
+      }
+
+      .kanban-skills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        padding-top: 4px;
+      }
+      .skill-tag {
+        font-size: 10px;
+        font-weight: 600;
+        padding: 3px 8px;
+        border-radius: 4px;
+        border: 1px solid transparent;
+      }
+      .tag-blue {
+        background: rgba(59, 130, 246, 0.1);
+        color: #2563eb;
+        border-color: rgba(59, 130, 246, 0.2);
+      }
+      .tag-red {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+        border-color: rgba(239, 68, 68, 0.2);
+      }
+      .tag-yellow {
+        background: rgba(234, 179, 8, 0.1);
+        color: #d97706;
+        border-color: rgba(234, 179, 8, 0.2);
+      }
+      .tag-green {
+        background: rgba(34, 197, 94, 0.1);
+        color: #16a34a;
+        border-color: rgba(34, 197, 94, 0.2);
+      }
+      .tag-purple {
+        background: rgba(168, 85, 247, 0.1);
+        color: #9333ea;
+        border-color: rgba(168, 85, 247, 0.2);
+      }
+      body.dark-mode .tag-blue {
+        color: #60a5fa;
+      }
+      body.dark-mode .tag-red {
+        color: #f87171;
+      }
+      body.dark-mode .tag-yellow {
+        color: #fde047;
+      }
+      body.dark-mode .tag-green {
+        color: #4ade80;
+      }
+      body.dark-mode .tag-purple {
+        color: #c084fc;
+      }
+
+      .kanban-mec {
+        font-size: 11px;
+        color: var(--t2);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 500;
+        margin-top: 4px;
+        padding-top: 6px;
+        border-top: 1px solid var(--b);
+      }
+      .kanban-mec i {
+        font-size: 14px;
+      }
+      .kanban-mec.unassigned {
+        color: var(--c-err);
+        font-weight: 600;
+      }
+      .kanban-mec.assigned {
+        color: var(--c-ok);
+      }
+
+      .btn-ia-suggest {
+        margin-top: 4px;
+        width: 100%;
+        height: 28px;
+        background: var(--s3);
+        border: 1px dashed var(--b2);
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--t2);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        transition: all 0.2s;
+      }
+      .btn-ia-suggest:hover {
+        background: var(--acc-l);
+        color: #b45309;
+        border-color: var(--acc);
+      }
+      body.dark-mode .btn-ia-suggest:hover {
+        background: rgba(234, 179, 8, 0.15);
+        color: #fef08a;
+        border-color: var(--acc);
+      }
+
+      /* =========================================
+       4. ABA DE DADOS (CURADORIA E PÓS-VENDA)
+       ========================================= */
+      .tabs-header {
+        display: flex;
+        gap: 24px;
+        border-bottom: 1px solid var(--b);
+        margin-bottom: 24px;
+      }
+      .tab-btn {
+        background: transparent;
+        border: none;
+        font-family: var(--font);
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--t3);
+        padding: 12px 0;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .tab-btn:hover {
+        color: var(--t);
+      }
+      .tab-btn.active {
+        color: var(--acc-d);
+        font-weight: 600;
+        border-bottom-color: var(--acc);
+      }
+      body.dark-mode .tab-btn {
+        color: var(--t3);
+      }
+      body.dark-mode .tab-btn:hover {
+        color: #f8fafc;
+      }
+      body.dark-mode .tab-btn.active {
+        color: #fef08a;
+        border-bottom-color: #fef08a;
+        font-weight: 600;
+      }
+
+      .tab-content {
+        display: none;
+      }
+      .tab-content.active {
+        display: block;
+        animation: fadeIn 0.3s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .dados-grid {
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 20px;
+        align-items: flex-start;
+      }
+
+      .review-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .review-card {
+        background: var(--s);
+        border: 1px solid var(--b);
+        border-radius: var(--r);
+        padding: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .review-card:hover {
+        border-color: var(--c-curadoria);
+        box-shadow: var(--shadow-sm);
+      }
+      .review-card.active {
+        border-color: var(--c-curadoria);
+        background: var(--bg-curadoria);
+      }
+      .review-card .time {
+        font-size: 10px;
+        color: var(--t3);
+        float: right;
+      }
+
+      .editor-panel {
+        background: var(--s);
+        border: 1px solid var(--b);
+        border-radius: var(--rl);
+        padding: 24px;
+        box-shadow: var(--shadow-card);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .editor-textarea {
+        width: 100%;
+        min-height: 180px;
+        background: var(--s2);
+        border: 1px solid var(--b2);
+        border-radius: var(--r);
+        padding: 16px;
+        font-family: var(--font);
+        font-size: 13px;
+        color: var(--t);
+        line-height: 1.6;
+        resize: vertical;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .editor-textarea:focus {
+        border-color: var(--acc);
+        background: var(--s);
+        box-shadow: 0 0 0 3px var(--acc-l);
+      }
+      body.dark-mode .editor-textarea:focus {
+        box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.3);
+      }
+
+      .feedback-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 16px;
+      }
+      .feedback-card {
+        background: var(--s);
+        border: 1px solid var(--b);
+        border-radius: var(--r);
+        padding: 16px;
+        box-shadow: var(--shadow-sm);
+      }
+      .stars {
+        color: var(--acc);
+        font-size: 16px;
+        display: flex;
+        gap: 2px;
+        margin-bottom: 8px;
+      }
+
+      /* =========================================
+       5. ASSISTENTE IA (MODAL)
+       ========================================= */
+      .fab-wrap {
+        position: fixed;
+        bottom: 32px;
+        right: 32px;
+        z-index: 60;
+        transition:
+          transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+          opacity 0.3s ease;
+        will-change: transform, opacity;
+      }
+      .fab-wrap.hide {
+        transform: scale(0.5);
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .fab {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        height: 52px;
+        padding: 0 24px 0 16px;
+        background: #0f172a;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 26px;
+        cursor: pointer;
+        font-family: var(--font);
+        font-size: 14px;
+        font-weight: 500;
+        color: #ffffff;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        transition: all 0.2s;
+      }
+      .fab:hover {
+        transform: translateY(-2px);
+        background: var(--acc);
+        color: #0f172a;
+        border-color: var(--acc);
+        box-shadow: 0 20px 25px -5px rgba(234, 179, 8, 0.2);
+      }
+      .fab-icon {
+        width: 32px;
+        height: 32px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+      }
+      .fab:hover .fab-icon {
+        background: rgba(0, 0, 0, 0.1);
+      }
+      .fab svg {
+        display: block;
+        fill: currentColor;
+      }
+      .fab:hover svg path,
+      .fab:hover svg circle {
+        stroke: #0f172a;
+      }
+
+      body.dark-mode .fab {
+        background: #1e293b;
+        border-color: var(--b);
+        color: #f8fafc;
+      }
+      body.dark-mode .fab:hover {
+        background: var(--acc);
+        color: #0f172a;
+        border-color: var(--acc);
+        box-shadow: 0 20px 25px -5px rgba(234, 179, 8, 0.2);
+      }
+      body.dark-mode .fab:hover .fab-icon {
+        background: rgba(0, 0, 0, 0.1);
+      }
+      body.dark-mode .fab:hover svg path,
+      body.dark-mode .fab:hover svg circle {
+        stroke: #0f172a;
+      }
+
+      .ai-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.3);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 40;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+        will-change: opacity;
+      }
+      .ai-backdrop.show {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .ai-modal {
+        position: fixed;
+        top: 40px;
+        left: 40px;
+        right: 40px;
+        bottom: 40px;
+        margin: auto;
+        background: var(--s);
+        border: 1px solid var(--b);
+        border-radius: var(--rl);
+        z-index: 50;
+        display: flex;
+        flex-direction: column;
+        box-shadow: var(--shadow-modal);
+        overflow: hidden;
+        transform-origin: bottom right;
+        transform: scale(0.3) translate(40px, 40px);
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+          opacity 0.3s ease;
+        will-change: transform, opacity;
+      }
+      .ai-modal.show {
+        transform: scale(1) translate(0, 0);
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .ai-content-fade {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        opacity: 0;
+        transition: opacity 0.3s ease 0.1s;
+      }
+      .ai-modal.show .ai-content-fade {
+        opacity: 1;
+      }
+
+      .ai-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--b);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+      }
+      .ai-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 10px;
+        font-weight: 600;
+        background: var(--acc-l);
+        color: #854d0e;
+        padding: 3px 8px;
+        border-radius: 12px;
+        border: 1px solid var(--acc);
+      }
+      body.dark-mode .ai-tag {
+        background: rgba(234, 179, 8, 0.15);
+        color: #fef08a;
+      }
+
+      .ai-close-btn {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 56px;
+        height: 56px;
+        border: none;
+        background: transparent;
+        color: var(--t2);
+        font-size: 20px;
+        cursor: pointer;
+        border-top-right-radius: var(--rl);
+        transition:
+          color 0.2s,
+          background 0.2s;
+      }
+      .ai-close-btn:hover {
+        color: var(--c-err);
+        background: rgba(239, 68, 68, 0.08);
+      }
+
+      .ai-body {
+        flex: 1;
+        background: var(--s3);
+        padding: 24px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .ai-msg {
+        padding: 14px 18px;
+        border-radius: 18px;
+        font-size: 13px;
+        line-height: 1.5;
+        max-width: 75%;
+        box-shadow: var(--shadow-sm);
+      }
+      .ai-msg.ai {
+        background: var(--s);
+        border: 1px solid var(--b);
+        align-self: flex-start;
+        border-bottom-left-radius: 4px;
+      }
+      .ai-msg.user {
+        background: var(--acc);
+        color: #0f172a;
+        align-self: flex-end;
+        border-bottom-right-radius: 4px;
+        font-weight: 500;
+      }
+
+      .ai-footer {
+        padding: 16px 24px;
+        border-top: 1px solid var(--b);
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .ai-voice-btn {
+        width: 100%;
+        height: 48px;
+        border-radius: 24px;
+        border: 1px solid var(--b2);
+        background: var(--s2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--t);
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: var(--font);
+      }
+      .ai-voice-btn:hover {
+        background: var(--t);
+        color: var(--s);
+        border-color: var(--t);
+      }
+      body.dark-mode .ai-voice-btn:hover {
+        background: var(--acc);
+        color: #0f172a;
+        border-color: var(--acc);
+      }
+
+      .ai-input-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .ai-input-wrap {
+        flex: 1;
+        background: var(--s2);
+        border: 1px solid var(--b2);
+        border-radius: 24px;
+        padding: 0 16px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        transition: all 0.2s;
+      }
+      .ai-input-wrap:focus-within {
+        border-color: var(--acc);
+        background: var(--s);
+        box-shadow: 0 0 0 3px var(--acc-l);
+      }
+      body.dark-mode .ai-input-wrap:focus-within {
+        box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.3);
+      }
+      .ai-input-wrap input {
+        border: none;
+        background: transparent;
+        outline: none;
+        width: 100%;
+        font-size: 13px;
+        color: var(--t);
+        font-weight: 500;
+        font-family: var(--font);
+      }
+      .ai-input-wrap input::placeholder {
+        color: var(--t3);
+        font-weight: 400;
+      }
+
+      .ai-circ-btn {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 1px solid var(--b2);
+        background: var(--s);
+        cursor: pointer;
+        color: var(--t2);
+        font-size: 20px;
+        transition: all 0.2s;
+        flex-shrink: 0;
+      }
+      .ai-circ-btn:hover {
+        background: var(--hover-bg);
+        color: var(--t);
+      }
+      .ai-circ-btn.send {
+        background: var(--acc);
+        border-color: var(--acc);
+        color: #0f172a;
+      }
+      .ai-circ-btn.send:hover {
+        filter: brightness(0.95);
+        transform: scale(1.05);
+      }
+
+      @media (max-width: 1100px) {
+        .grid-chart,
+        .dados-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <!-- SIDEBAR -->
+      <nav class="sb">
+        <div class="sb-brand">
+          <div class="sb-icon flex-center">
+            <i class="ti ti-bolt" aria-hidden="true"></i>
+          </div>
+          <div>
+            <div class="sb-name">Ophicina</div>
+            <div class="sb-desc">Injeção Eletrônica</div>
+          </div>
+        </div>
+
+        <div class="sb-nav">
+          <div class="sb-item active" onclick="setPage('Dashboard', this)">
+            <i class="ti ti-layout-dashboard"></i>Dashboard
+          </div>
+          <div class="sb-item" onclick="setPage('Colaboradores', this)">
+            <i class="ti ti-users"></i>Colaboradores
+          </div>
+          <div class="sb-item" onclick="setPage('Clientes', this)">
+            <i class="ti ti-car"></i>Clientes
+          </div>
+          <div class="sb-item" onclick="setPage('Ordens de Serviço', this)">
+            <i class="ti ti-clipboard-list"></i>Ordens de Serviço
+          </div>
+          <div class="sb-item" onclick="setPage('Dados', this)">
+            <i class="ti ti-database"></i>Dados
+          </div>
+        </div>
+
+        <div class="sb-bot">
+          <div class="sb-separator"></div>
+          <div class="sb-item" onclick="setPage('Configurações', this)">
+            <i class="ti ti-settings"></i>Configurações
+          </div>
+          <div class="sb-item" style="color: var(--c-err)">
+            <i class="ti ti-logout"></i>Sair
+          </div>
+        </div>
+      </nav>
+
+      <!-- MAIN WRAPPER -->
+      <div class="main">
+        <!-- HEADER -->
+        <div class="tb">
+          <div style="width: 160px">
+            <span class="tb-title" id="pageTitle">Dashboard</span>
+          </div>
+
+          <div style="flex: 1" class="flex-center">
+            <div class="tb-search">
+              <i class="ti ti-search"></i>
+              <input
+                type="text"
+                placeholder="Buscar O.S., clientes, mecânicos..."
+              />
+            </div>
+          </div>
+
+          <div class="tb-right">
+            <div class="flt-wrap">
+              <!-- BOTÃO PRIVACIDADE -->
+              <button
+                class="btn-icon"
+                onclick="togglePrivacy()"
+                title="Ocultar informações sensíveis"
+              >
+                <i class="ti ti-eye" id="privacyIco"></i>
+              </button>
+
+              <!-- FILTRO E DROPDOWN -->
+              <div class="flt-container" id="headerFilters">
+                <button
+                  class="btn-icon"
+                  onclick="toggleFlt(event)"
+                  style="
+                    width: auto;
+                    padding: 0 14px;
+                    gap: 6px;
+                    font-weight: 500;
+                    font-size: 13px;
+                    font-family: var(--font);
+                  "
+                >
+                  <i class="ti ti-adjustments-horizontal"></i>Filtrar<i
+                    class="ti ti-chevron-down"
+                    style="font-size: 14px"
+                  ></i>
+                </button>
+                <div class="flt-dd" id="fltDd">
+                  <div class="flt-opt" onclick="selectPeriod('sem', this)">
+                    Semanal
+                  </div>
+                  <div class="flt-opt sel" onclick="selectPeriod('mes', this)">
+                    Mensal
+                  </div>
+                  <div class="flt-opt" onclick="selectPeriod('ano', this)">
+                    Anual
+                  </div>
+                </div>
+              </div>
+
+              <!-- BOTÃO MODO ESCURO -->
+              <button
+                class="btn-icon"
+                onclick="toggleDarkMode()"
+                title="Alternar Tema"
+              >
+                <i class="ti ti-moon" id="themeIco"></i>
+              </button>
+            </div>
+
+            <button class="btn-icon" onclick="refreshDash()" title="Atualizar">
+              <i class="ti ti-refresh" id="refreshIco"></i>
+            </button>
+            <div
+              class="btn-icon"
+              style="position: relative"
+              title="Notificações"
+            >
+              <i class="ti ti-bell"></i
+              ><span
+                class="notif-dot"
+                style="
+                  position: absolute;
+                  top: 6px;
+                  right: 6px;
+                  width: 8px;
+                  height: 8px;
+                  background: var(--c-err);
+                  border-radius: 50%;
+                  border: 2px solid var(--s);
+                "
+              ></span>
+            </div>
+            <div class="tb-profile">
+              <div
+                class="flex-center"
+                style="
+                  width: 32px;
+                  height: 32px;
+                  border-radius: 50%;
+                  background: var(--acc);
+                  color: #0f172a;
+                  font-size: 11px;
+                  font-weight: 600;
+                "
+              >
+                ÉL
+              </div>
+              <div
+                style="font-size: 13px; font-weight: 500"
+                class="tb-profile-name"
+              >
+                Érica Lima
+              </div>
+              <i
+                class="ti ti-chevron-down"
+                style="font-size: 14px; color: var(--t3)"
+              ></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONTEÚDO MUTÁVEL -->
+        <div class="cnt">
+          <!-- EMPTY STATE -->
+          <div id="emptyState">
+            <i
+              class="ti ti-layout-grid-add"
+              style="font-size: 48px; opacity: 0.5; margin-bottom: 16px"
+            ></i>
+            <p style="font-weight: 500" id="emptyStateText">
+              Selecione a aba Dashboard para visualizar os indicadores.
+            </p>
+          </div>
+
+          <!-- TELA 1: DASHBOARD -->
+          <div id="dashContent">
+            <div class="grid-kpi" id="kpiGrid"></div>
+            <div class="grid-chart">
+              <div class="card">
+                <div class="ch">
+                  <span>Ordens de Serviço — Evolução</span
+                  ><span class="cs" id="osChartSub"></span>
+                </div>
+                <div style="position: relative; height: 220px">
+                  <canvas id="osChart"></canvas>
+                </div>
+              </div>
+              <div class="card">
+                <div class="ch">
+                  <span>Faturamento (R$)</span
+                  ><span class="cs" id="revChartSub"></span>
+                </div>
+                <div style="position: relative; height: 220px">
+                  <canvas id="revChart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-bot">
+              <div class="card">
+                <div class="ch">
+                  <span
+                    ><i
+                      class="ti ti-trophy"
+                      style="color: var(--acc); margin-right: 6px"
+                    ></i
+                    >Produtividade</span
+                  >
+                </div>
+                <div id="rankList"></div>
+              </div>
+              <div class="card" id="osList"></div>
+              <div class="card" id="curaList"></div>
+            </div>
+          </div>
+
+          <!-- TELA 2: QUADRO KANBAN DE ORDENS DE SERVIÇO -->
+          <div id="osContent" style="display: none">
+            <div class="os-action-bar">
+              <button
+                class="btn-primary"
+                onclick="
+                  alert(
+                    'Abrindo formulário para cadastrar nova Ordem de Serviço.',
+                  )
+                "
+              >
+                <i class="ti ti-plus"></i> Nova Ordem de Serviço
+              </button>
+            </div>
+
+            <div class="kanban-board">
+              <!-- Coluna Abertas -->
+              <div class="kanban-col col-aberta">
+                <div class="kanban-col-header">
+                  <span>Abertas</span>
+                  <span class="kanban-badge s-a">2</span>
+                </div>
+
+                <div class="kanban-card">
+                  <div class="kanban-row">
+                    <span class="kanban-plate">XYZ-5E89</span>
+                    <span class="kanban-client">Fernanda C.</span>
+                  </div>
+                  <p class="kanban-desc">
+                    Sintoma: Perda de potência e motor falhando de forma
+                    intermitente em alta rotação.
+                  </p>
+                  <div class="kanban-skills">
+                    <span class="skill-tag tag-red">Motor</span>
+                    <span class="skill-tag tag-blue">Injeção Eletrônica</span>
+                  </div>
+                  <div class="kanban-mec unassigned">
+                    <i class="ti ti-user-x"></i> Sem mecânico alocado
+                  </div>
+                  <button class="btn-ia-suggest" onclick="openAI()">
+                    <i class="ti ti-sparkles"></i> Sugerir com IA
+                  </button>
+                </div>
+
+                <div class="kanban-card">
+                  <div class="kanban-row">
+                    <span class="kanban-plate">KJL-7V44</span>
+                    <span class="kanban-client">Marcos Lima</span>
+                  </div>
+                  <p class="kanban-desc">
+                    Sintoma: Luz de anomalia acesa constantemente no painel e
+                    consumo excessivo.
+                  </p>
+                  <div class="kanban-skills">
+                    <span class="skill-tag tag-purple">Scanner</span>
+                    <span class="skill-tag tag-blue">Injeção Eletrônica</span>
+                  </div>
+                  <div class="kanban-mec unassigned">
+                    <i class="ti ti-user-x"></i> Sem mecânico alocado
+                  </div>
+                  <button class="btn-ia-suggest" onclick="openAI()">
+                    <i class="ti ti-sparkles"></i> Sugerir com IA
+                  </button>
+                </div>
+              </div>
+
+              <!-- Coluna Em Andamento -->
+              <div class="kanban-col col-andamento">
+                <div class="kanban-col-header">
+                  <span>Em Andamento</span>
+                  <span class="kanban-badge s-g">2</span>
+                </div>
+
+                <div class="kanban-card">
+                  <div class="kanban-row">
+                    <span class="kanban-plate">ABC-1D23</span>
+                    <span class="kanban-client">Carlos Mendes</span>
+                  </div>
+                  <p class="kanban-desc">
+                    Sintoma: Falha de leitura de gases. Diagnóstico aprovado
+                    para substituição do componente.
+                  </p>
+                  <div class="kanban-skills">
+                    <span class="skill-tag tag-blue">Injeção Eletrônica</span>
+                    <span class="skill-tag tag-purple">Scanner</span>
+                  </div>
+                  <div class="kanban-mec assigned">
+                    <i class="ti ti-user-bolt"></i> <b>Mecânico:</b> Bruno S.
+                  </div>
+                </div>
+
+                <div class="kanban-card">
+                  <div class="kanban-row">
+                    <span class="kanban-plate">STU-9H67</span>
+                    <span class="kanban-client">Marcos Souza</span>
+                  </div>
+                  <p class="kanban-desc">
+                    Sintoma: Oscilação na marcha lenta. Em andamento
+                    desobstrução física de bicos flautados.
+                  </p>
+                  <div class="kanban-skills">
+                    <span class="skill-tag tag-blue">Injeção Eletrônica</span>
+                    <span class="skill-tag tag-yellow">Limpeza</span>
+                  </div>
+                  <div class="kanban-mec assigned">
+                    <i class="ti ti-user-bolt"></i> <b>Mecânico:</b> Marcos T.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Coluna Aguardando Curadoria -->
+              <div class="kanban-col col-curadoria">
+                <div class="kanban-col-header">
+                  <span>Aguardando Curadoria</span>
+                  <span class="kanban-badge s-r">1</span>
+                </div>
+
+                <div
+                  class="kanban-card"
+                  onclick="
+                    setPage('Dados', document.querySelectorAll('.sb-item')[4])
+                  "
+                  title="Clique para analisar no painel de Dados"
+                >
+                  <div class="kanban-row">
+                    <span class="kanban-plate">MNO-3F12</span>
+                    <span class="kanban-client">Roberto Alves</span>
+                  </div>
+                  <p class="kanban-desc">
+                    Relato Técnico: Efetuado o recondicionamento completo do
+                    estator e troca do retificador de carga.
+                  </p>
+                  <div class="kanban-skills">
+                    <span class="skill-tag tag-yellow">Autoelétrica</span>
+                    <span class="skill-tag tag-yellow">Alternadores</span>
+                  </div>
+                  <div class="kanban-mec assigned">
+                    <i class="ti ti-user-check"></i> <b>Enviado por:</b> Diego
+                    F.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Coluna Finalizadas -->
+              <div class="kanban-col col-finalizada">
+                <div class="kanban-col-header">
+                  <span>Finalizadas</span>
+                  <span class="kanban-badge s-f">1</span>
+                </div>
+
+                <div class="kanban-card">
+                  <div class="kanban-row">
+                    <span class="kanban-plate">PQR-7G45</span>
+                    <span class="kanban-client">Ana Lima</span>
+                  </div>
+                  <p class="kanban-desc">
+                    Relato Indexado: Alinhamento digital realizado após troca
+                    estrutural completa das buchas de balança.
+                  </p>
+                  <div class="kanban-skills">
+                    <span class="skill-tag tag-green">Suspensão</span>
+                    <span class="skill-tag tag-green">Alinhamento</span>
+                  </div>
+                  <div class="kanban-mec assigned">
+                    <i class="ti ti-user-check"></i> <b>Finalizado por:</b> Leo
+                    M.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TELA 3: DADOS -->
+          <div id="dadosContent" style="display: none">
+            <div class="tabs-header">
+              <button
+                class="tab-btn active"
+                id="btnTabCura"
+                onclick="switchDadosTab('curadoria')"
+              >
+                <i class="ti ti-brain" style="font-size: 18px"></i> Avaliar
+                Relatórios
+              </button>
+              <button
+                class="tab-btn"
+                id="btnTabPos"
+                onclick="switchDadosTab('posvenda')"
+              >
+                <i class="ti ti-star" style="font-size: 18px"></i> Pós-Venda
+              </button>
+            </div>
+
+            <!-- ABA A: AVALIAR RELATÓRIOS -->
+            <div id="tabCuradoria" class="tab-content active">
+              <div
+                class="grid-kpi"
+                style="
+                  grid-template-columns: repeat(3, 1fr);
+                  margin-bottom: 24px;
+                "
+              >
+                <div class="card" style="padding: 16px">
+                  <div
+                    style="
+                      font-size: 12px;
+                      color: var(--t3);
+                      margin-bottom: 4px;
+                      font-weight: 500;
+                    "
+                  >
+                    <i class="ti ti-database"></i> Total Processados
+                  </div>
+                  <div
+                    class="kpi-val"
+                    style="font-size: 24px; font-weight: 600"
+                  >
+                    342
+                  </div>
+                </div>
+                <div class="card" style="padding: 16px">
+                  <div
+                    style="
+                      font-size: 12px;
+                      color: var(--t3);
+                      margin-bottom: 4px;
+                      font-weight: 500;
+                    "
+                  >
+                    <i class="ti ti-message-chatbot"></i> Envios Homologados
+                  </div>
+                  <div
+                    class="kpi-val"
+                    style="font-size: 24px; font-weight: 600"
+                  >
+                    1.258
+                  </div>
+                </div>
+                <div class="card" style="padding: 16px">
+                  <div
+                    style="
+                      font-size: 12px;
+                      color: var(--t3);
+                      margin-bottom: 4px;
+                      font-weight: 500;
+                    "
+                  >
+                    <i class="ti ti-clock"></i> Último Envio
+                  </div>
+                  <div
+                    style="font-size: 18px; font-weight: 600; margin-top: 4px"
+                  >
+                    Hoje, 09:41
+                  </div>
+                </div>
+              </div>
+
+              <div class="dados-grid">
+                <div class="review-list">
+                  <h3 style="font-size: 14px; margin-bottom: 12px">
+                    Fila de Revisão
+                  </h3>
+
+                  <div class="review-card active">
+                    <span class="time">Há 15 min</span>
+                    <div
+                      style="
+                        font-weight: 600;
+                        font-size: 13px;
+                        margin-bottom: 4px;
+                      "
+                      class="kanban-client"
+                    >
+                      MNO-3F12
+                      <span style="font-weight: 400; color: var(--t2)"
+                        >- Diego F.</span
+                      >
+                    </div>
+                    <div style="font-size: 11px; color: var(--t3)">
+                      Troca de estator e retificador
+                    </div>
+                  </div>
+
+                  <div class="review-card">
+                    <span class="time">Há 2 horas</span>
+                    <div
+                      style="
+                        font-weight: 600;
+                        font-size: 13px;
+                        margin-bottom: 4px;
+                      "
+                      class="kanban-client"
+                    >
+                      JKL-9X88
+                      <span style="font-weight: 400; color: var(--t2)"
+                        >- Marcos T.</span
+                      >
+                    </div>
+                    <div style="font-size: 11px; color: var(--t3)">
+                      Limpeza de bicos injetores
+                    </div>
+                  </div>
+
+                  <div class="review-card">
+                    <span class="time">Ontem</span>
+                    <div
+                      style="
+                        font-weight: 600;
+                        font-size: 13px;
+                        margin-bottom: 4px;
+                      "
+                      class="kanban-client"
+                    >
+                      DEF-4A55
+                      <span style="font-weight: 400; color: var(--t2)"
+                        >- Bruno S.</span
+                      >
+                    </div>
+                    <div style="font-size: 11px; color: var(--t3)">
+                      Scanner — Código P0420
+                    </div>
+                  </div>
+                </div>
+
+                <div class="editor-panel">
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: center;
+                    "
+                  >
+                    <h2 style="font-size: 16px; font-weight: 600">
+                      Avaliação de Relato Técnico -
+                      <span style="color: var(--c-info)" class="kanban-plate"
+                        >MNO-3F12</span
+                      >
+                    </h2>
+                    <span
+                      class="os-st s-r"
+                      style="font-size: 11px; font-weight: 600"
+                      >Aguardando Curadoria</span
+                    >
+                  </div>
+
+                  <div
+                    style="
+                      font-size: 12px;
+                      color: var(--t2);
+                      background: var(--s2);
+                      padding: 12px;
+                      border-radius: var(--r);
+                      border: 1px solid var(--b);
+                    "
+                  >
+                    <b>Sintoma Original:</b> Cliente relatou que a bateria não
+                    estava segurando carga e o veículo apagava em movimento.
+                  </div>
+
+                  <div>
+                    <label
+                      style="
+                        font-size: 12px;
+                        font-weight: 600;
+                        margin-bottom: 8px;
+                        display: block;
+                      "
+                      >Revisão do Relato:</label
+                    >
+                    <textarea class="editor-textarea">
+O veículo apresentou falha de carregamento no sistema elétrico. Após testes com multímetro, identificou-se curto-circuito no estator e falha na regulagem de voltagem pelo retificador. Procedimento adotado: Efetuado o recondicionamento completo do estator (rebobinagem) e a troca do retificador de carga por componente novo original. Teste de carga após montagem apresentou 14.2V estáveis.</textarea
+                    >
+                  </div>
+
+                  <div
+                    style="display: flex; justify-content: flex-end; gap: 12px"
+                  >
+                    <button
+                      class="btn-primary"
+                      style="background: #15803d; color: #fff"
+                      onclick="
+                        alert('Relatório Aprovado e Enviado com sucesso!')
+                      "
+                    >
+                      <i class="ti ti-send"></i> Aprovar e Enviar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ABA B: MÉTRICAS DE PÓS-VENDA -->
+            <div id="tabPosVenda" class="tab-content">
+              <div class="os-action-bar">
+                <button
+                  class="btn-primary"
+                  onclick="
+                    alert(
+                      'Iniciando integração para Importar Métricas de Satisfação de ferramentas externas (Google, WhatsApp, etc).',
+                    )
+                  "
+                >
+                  <i class="ti ti-cloud-download"></i> Importar Métricas
+                </button>
+              </div>
+
+              <div
+                class="grid-kpi"
+                style="
+                  grid-template-columns: repeat(3, 1fr);
+                  margin-bottom: 24px;
+                "
+              >
+                <div class="card" style="padding: 16px; text-align: center">
+                  <div
+                    style="
+                      font-size: 12px;
+                      color: var(--t3);
+                      margin-bottom: 8px;
+                      font-weight: 500;
+                    "
+                  >
+                    Satisfação Média (NPS)
+                  </div>
+                  <div
+                    class="kpi-val"
+                    style="
+                      font-size: 36px;
+                      font-weight: 600;
+                      color: var(--c-ok);
+                    "
+                  >
+                    4.8
+                  </div>
+                  <div
+                    class="stars"
+                    style="justify-content: center; margin-top: 4px"
+                  >
+                    <i class="ti ti-star-filled"></i
+                    ><i class="ti ti-star-filled"></i
+                    ><i class="ti ti-star-filled"></i
+                    ><i class="ti ti-star-filled"></i
+                    ><i class="ti ti-star-half-filled"></i>
+                  </div>
+                </div>
+
+                <div
+                  class="card"
+                  style="
+                    padding: 16px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                  "
+                >
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      margin-bottom: 8px;
+                      font-size: 13px;
+                    "
+                  >
+                    <span>Promotores (5 est.)</span>
+                    <span style="font-weight: 600; color: var(--c-ok)"
+                      >85%</span
+                    >
+                  </div>
+                  <div
+                    style="
+                      width: 100%;
+                      height: 6px;
+                      background: var(--s2);
+                      border-radius: 3px;
+                      margin-bottom: 16px;
+                    "
+                  >
+                    <div
+                      style="
+                        width: 85%;
+                        height: 100%;
+                        background: var(--c-ok);
+                        border-radius: 3px;
+                      "
+                    ></div>
+                  </div>
+
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      margin-bottom: 8px;
+                      font-size: 13px;
+                    "
+                  >
+                    <span>Detratores (1-3 est.)</span>
+                    <span style="font-weight: 600; color: var(--c-err)"
+                      >4%</span
+                    >
+                  </div>
+                  <div
+                    style="
+                      width: 100%;
+                      height: 6px;
+                      background: var(--s2);
+                      border-radius: 3px;
+                    "
+                  >
+                    <div
+                      style="
+                        width: 4%;
+                        height: 100%;
+                        background: var(--c-err);
+                        border-radius: 3px;
+                      "
+                    ></div>
+                  </div>
+                </div>
+
+                <div
+                  class="card"
+                  style="
+                    padding: 16px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                  "
+                >
+                  <div
+                    style="
+                      font-size: 12px;
+                      color: var(--t3);
+                      margin-bottom: 4px;
+                      font-weight: 500;
+                    "
+                  >
+                    <i class="ti ti-users"></i> Avaliações Totais
+                  </div>
+                  <div
+                    class="kpi-val"
+                    style="
+                      font-size: 24px;
+                      font-weight: 600;
+                      margin-bottom: 12px;
+                    "
+                  >
+                    124
+                  </div>
+                  <div
+                    style="
+                      font-size: 12px;
+                      color: var(--t3);
+                      margin-bottom: 4px;
+                      font-weight: 500;
+                    "
+                  >
+                    <i class="ti ti-message-circle"></i> Comentários por extenso
+                  </div>
+                  <div
+                    class="kpi-val"
+                    style="font-size: 24px; font-weight: 600"
+                  >
+                    89
+                  </div>
+                </div>
+              </div>
+
+              <h3 style="font-size: 15px; margin-bottom: 16px">
+                Feedbacks Recentes
+              </h3>
+              <div class="feedback-grid">
+                <div class="feedback-card">
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      margin-bottom: 8px;
+                    "
+                  >
+                    <span
+                      style="font-weight: 600; font-size: 14px"
+                      class="kanban-client"
+                      >Carlos Mendes</span
+                    >
+                    <span style="font-size: 11px; color: var(--t3)"
+                      >Há 2 dias</span
+                    >
+                  </div>
+                  <div class="stars">
+                    <i class="ti ti-star-filled"></i
+                    ><i class="ti ti-star-filled"></i
+                    ><i class="ti ti-star-filled"></i
+                    ><i class="ti ti-star-filled"></i
+                    ><i class="ti ti-star-filled"></i>
+                  </div>
+                  <p
+                    style="font-size: 12px; color: var(--t2); line-height: 1.5"
+                  >
+                    O carro ficou excelente. O diagnóstico da injeção foi muito
+                    rápido. Recomendo a oficina.
+                  </p>
+                  <div
+                    style="
+                      margin-top: 12px;
+                      font-size: 10px;
+                      font-weight: 600;
+                      color: var(--t3);
+                      padding-top: 8px;
+                      border-top: 1px dashed var(--b);
+                    "
+                  >
+                    Referente a O.S. ABC-1D23
+                  </div>
+                </div>
+
+                <div class="feedback-card">
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      margin-bottom: 8px;
+                    "
+                  >
+                    <span
+                      style="font-weight: 600; font-size: 14px"
+                      class="kanban-client"
+                      >Ana Lima</span
+                    >
+                    <span style="font-size: 11px; color: var(--t3)"
+                      >Há 5 dias</span
+                    >
+                  </div>
+                  <div class="stars">
+                    <i class="ti ti-star-filled"></i
+                    ><i class="ti ti-star-filled"></i
+                    ><i class="ti ti-star-filled"></i
+                    ><i class="ti ti-star-filled"></i
+                    ><i class="ti ti-star-filled" style="color: var(--s2)"></i>
+                  </div>
+                  <p
+                    style="font-size: 12px; color: var(--t2); line-height: 1.5"
+                  >
+                    Serviço de suspensão resolvido. O barulho parou. Só demorou
+                    um pouco mais que o previsto.
+                  </p>
+                  <div
+                    style="
+                      margin-top: 12px;
+                      font-size: 10px;
+                      font-weight: 600;
+                      color: var(--t3);
+                      padding-top: 8px;
+                      border-top: 1px dashed var(--b);
+                    "
+                  >
+                    Referente a O.S. PQR-7G45
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAB -->
+      <div class="fab-wrap" id="fabWrap">
+        <button class="fab" onclick="openAI()">
+          <div class="fab-icon">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <circle cx="9" cy="9" r="8" stroke="white" stroke-width="1.4" />
+              <path
+                d="M6 9.5 L8 7 L9.5 9 L11 6.5"
+                stroke="white"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+              <circle cx="6" cy="9.5" r="1" fill="white" />
+              <circle cx="12" cy="11" r="1" fill="white" />
+              <path
+                d="M11 9 L12 11"
+                stroke="white"
+                stroke-width="1.3"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+          Assistente IA
+        </button>
+      </div>
+
+      <!-- MODAL IA -->
+      <div class="ai-backdrop" id="aiBackdrop" onclick="closeAI()"></div>
+      <div class="ai-modal" id="aiModal">
+        <div class="ai-content-fade">
+          <div class="ai-header">
+            <div style="display: flex; align-items: center; gap: 10px">
+              <span style="font-size: 16px; font-weight: 600"
+                >Assistente IA</span
+              >
+              <span class="ai-tag"
+                ><i class="ti ti-sparkles"></i> RAG Ativo</span
+              >
+            </div>
+            <button class="ai-close-btn" onclick="closeAI()">
+              <i class="ti ti-x"></i>
+            </button>
+          </div>
+          <div class="ai-body">
+            <div class="ai-msg ai">
+              Olá, Érica. Sou o Assistente IA da Ophicina conectado à sua base
+              de dados. Como posso ajudar na operação hoje?
+            </div>
+            <div class="ai-msg user">
+              Temos um problema no veículo ABC-1D23. O cliente relata perda de
+              potência intermitente.
+            </div>
+            <div class="ai-msg ai">
+              Baseado no histórico do veículo <b>ABC-1D23</b> e nos relatórios
+              anteriores, o sintoma costuma estar associado à
+              <b>obstrução dos bicos injetores</b> ou falha no
+              <b>sensor O2</b>.<br /><br />Recomendo verificar os bicos
+              injetores.
+            </div>
+          </div>
+          <div class="ai-footer">
+            <button class="ai-voice-btn">
+              <i class="ti ti-wave-sine"></i> Iniciar Conversação por Voz
+            </button>
+            <div class="ai-input-row">
+              <div class="ai-input-wrap">
+                <input type="text" placeholder="Digite sua dúvida técnica..." />
+              </div>
+              <button class="ai-circ-btn flex-center">
+                <i class="ti ti-microphone"></i>
+              </button>
+              <button class="ai-circ-btn send flex-center">
+                <i class="ti ti-send"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+    <script>
+      let isAIOpen = false;
+      function openAI() {
+        isAIOpen = true;
+        document.getElementById("aiBackdrop").classList.add("show");
+        document.getElementById("fabWrap").classList.add("hide");
+        document.getElementById("aiModal").classList.add("show");
+      }
+      function closeAI() {
+        isAIOpen = false;
+        document.getElementById("aiBackdrop").classList.remove("show");
+        document.getElementById("aiModal").classList.remove("show");
+        document.getElementById("fabWrap").classList.remove("hide");
+      }
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && isAIOpen) closeAI();
+      });
+
+      // DADOS DO DASHBOARD
+      const DATA = {
+        sem: {
+          kpi: [
+            ["Faturamento", "R$ 8.240", "+12%", "up", "ti-currency-dollar"],
+            ["O.S. Abertas", "6", "-2 vs ant.", "dn", "ti-file-text"],
+            ["O.S. Concluídas", "14", "+3 vs ant.", "up", "ti-circle-check"],
+            ["Tempo Médio", "3.2h", "no padrão", "neu", "ti-clock"],
+            ["Satisfação", "4.8/5", "excelente", "up", "ti-star"],
+            ["Clientes Ativos", "211", "+2 novos", "up", "ti-users"],
+          ],
+          lbl: ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+          d1: [3, 2, 4, 3, 2, 1],
+          d2: [2, 3, 3, 4, 3, 2],
+          rV: [1100, 1400, 1350, 1600, 1800, 990],
+          subO: "últimos 7 dias",
+          subR: "por dia da semana",
+        },
+        mes: {
+          kpi: [
+            [
+              "Faturamento",
+              "R$ 34.780",
+              "+8% vs ant.",
+              "up",
+              "ti-currency-dollar",
+            ],
+            ["O.S. Abertas", "9", "+1 vs ant.", "dn", "ti-file-text"],
+            ["O.S. Concluídas", "57", "+7 vs ant.", "up", "ti-circle-check"],
+            ["Tempo Médio", "3.5h", "acima média", "dn", "ti-clock"],
+            ["Satisfação", "4.7/5", "estável", "neu", "ti-star"],
+            ["Clientes Ativos", "215", "+4 novos", "up", "ti-users"],
+          ],
+          lbl: ["S1", "S2", "S3", "S4"],
+          d1: [4, 6, 5, 9],
+          d2: [10, 15, 18, 14],
+          rV: [7200, 9800, 10100, 7680],
+          subO: "últimos 30 dias",
+          subR: "por semana do mês",
+        },
+        ano: {
+          kpi: [
+            [
+              "Faturamento",
+              "R$ 392.400",
+              "+15% vs ant.",
+              "up",
+              "ti-currency-dollar",
+            ],
+            ["O.S. Abertas", "8", "média anual", "neu", "ti-file-text"],
+            ["O.S. Concluídas", "684", "+54 vs ant.", "up", "ti-circle-check"],
+            ["Tempo Médio", "3.4h", "no padrão", "neu", "ti-clock"],
+            ["Satisfação", "4.6/5", "pós-venda", "neu", "ti-star"],
+            ["Clientes Ativos", "245", "+30 novos", "up", "ti-users"],
+          ],
+          lbl: [
+            "Jan",
+            "Fev",
+            "Mar",
+            "Abr",
+            "Mai",
+            "Jun",
+            "Jul",
+            "Ago",
+            "Set",
+            "Out",
+            "Nov",
+            "Dez",
+          ],
+          d1: [6, 5, 7, 8, 6, 9, 7, 8, 10, 9, 8, 7],
+          d2: [48, 44, 52, 55, 50, 60, 58, 62, 65, 63, 60, 57],
+          rV: [
+            28000, 25000, 31000, 33000, 30000, 35000, 34000, 38000, 40000,
+            37000, 36000, 25400,
+          ],
+          subO: "últimos 12 meses",
+          subR: "por mês do ano",
+        },
+      };
+      const TEAM = [
+        ["Bruno S.", "Injeção", 100],
+        ["Marcos T.", "Motor", 85],
+        ["Diego F.", "Elétrica", 60],
+        ["Leo M.", "Suspensão", 40],
+        ["Paulo R.", "Injeção", 25],
+      ];
+      let osCh = null,
+        rvCh = null,
+        curP = "mes",
+        isDark = false,
+        isPrivacy = false;
+
+      function toggleDarkMode() {
+        isDark = !isDark;
+        document.body.classList.toggle("dark-mode", isDark);
+        document.getElementById("themeIco").className = isDark
+          ? "ti ti-sun"
+          : "ti ti-moon";
+        if (document.getElementById("dashContent").style.display !== "none")
+          buildCharts(DATA[curP]);
+      }
+
+      function togglePrivacy() {
+        isPrivacy = !isPrivacy;
+        document.body.classList.toggle("privacy-on", isPrivacy);
+        document.getElementById("privacyIco").className = isPrivacy
+          ? "ti ti-eye-off"
+          : "ti ti-eye";
+      }
+
+      function renderUI(d) {
+        const dr = {
+          up: '<i class="ti ti-trending-up"></i>',
+          dn: '<i class="ti ti-trending-down"></i>',
+          neu: '<i class="ti ti-minus"></i>',
+        };
+        document.getElementById("kpiGrid").innerHTML = d.kpi
+          .map(
+            (k) => `
+    <div class="card" style="padding:20px">
+      <div style="font-size:12px;color:var(--t3);display:flex;align-items:center;gap:6px;margin-bottom:8px;font-weight:500">
+        <i class="ti ${k[4]}" style="font-size:16px;color:var(--t2)"></i>${k[0]}
+      </div>
+      <div class="kpi-val" style="font-size:26px;font-weight:600;letter-spacing:-0.5px;line-height:1">${k[1]}</div>
+      <div class="kpi-d c-${k[3]}" style="font-size:12px;margin-top:8px;display:flex;align-items:center;gap:4px;font-weight:600">
+        ${dr[k[3]]}<span>${k[2]}</span>
+      </div>
+    </div>
+  `,
+          )
+          .join("");
+        document.getElementById("rankList").innerHTML = TEAM.map(
+          (m, i) =>
+            `<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div style="width:30px;height:30px;border-radius:50%;background:var(--s2);border:1px solid var(--b);font-size:11px;font-weight:600" class="flex-center kanban-plate">${m[0][0]}</div><div style="flex:1"><div class="kanban-client" style="font-size:13px;font-weight:500">${m[0]}</div><div style="font-size:11px;color:var(--t3)">${m[1]}</div></div><div style="flex:1;height:6px;background:var(--s2);border-radius:3px;overflow:hidden"><div style="height:100%;background:var(--acc);width:${m[2]}%"></div></div><span class="kpi-val" style="font-size:12px;font-weight:600">${m[2]}%</span></div>`,
+        ).join("");
+      }
+
+      document.getElementById("osList").innerHTML =
+        `<div class="ch"><span>Últimas O.S.</span></div>` +
+        [
+          ["ABC-1D23", "Carlos M.", "Sensor O2", "s-g", "Andamento"],
+          ["XYZ-5E89", "Fernanda C.", "Motor", "s-a", "Aberta"],
+          ["MNO-3F12", "Roberto A.", "Alternador", "s-r", "Aguard. curadoria"],
+          ["PQR-7G45", "Ana Lima", "Suspensão", "s-f", "Finalizada"],
+        ]
+          .map(
+            (o) =>
+              `<div class="os-item"><span class="kanban-plate" style="font-size:11px;font-weight:600;border:1px solid var(--b);border-radius:4px;padding:3px 6px;background:var(--s)">${o[0]}</span><div style="flex:1;min-width:0"><div class="kanban-client" style="font-size:13px;font-weight:500">${o[1]}</div><div style="font-size:11px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${o[2]}</div></div><span class="os-st ${o[3]}">${o[4]}</span></div>`,
+          )
+          .join("");
+      document.getElementById("curaList").innerHTML =
+        `<div class="ch"><span><i class="ti ti-file-certificate" style="color:var(--acc);margin-right:6px;font-size:18px"></i>Curadoria de Relatórios</span><span class="cs">Pendentes</span></div>` +
+        [
+          ["MNO-3F12", "Roberto A.", "Troca de estator e retificador"],
+          ["JKL-9X88", "Diego F.", "Limpeza de bicos injetores"],
+          ["DEF-4A55", "Marcos T.", "Scanner — P0420"],
+          ["GHI-2B33", "Ana Lima", "Substituição de pastilhas"],
+        ]
+          .map(
+            (o) =>
+              `<div class="os-item"><span class="kanban-plate" style="font-size:11px;font-weight:600;border:1px solid var(--b);border-radius:4px;padding:3px 6px;background:var(--s)">${o[0]}</span><div style="flex:1;min-width:0"><div class="kanban-client" style="font-size:13px;font-weight:500">${o[1]}</div><div style="font-size:11px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${o[2]}</div></div><span class="os-st s-r">Revisar</span></div>`,
+          )
+          .join("");
+
+      function buildCharts(d) {
+        const gc = isDark ? "rgba(255,255,255,.06)" : "rgba(0,0,0,.06)",
+          tc = isDark ? "rgba(248,250,252,.6)" : "#64748b";
+        const colorAberta = getComputedStyle(document.documentElement)
+          .getPropertyValue("--c-aberta")
+          .trim();
+        const bgAberta = isDark
+          ? "rgba(56, 189, 248, 0.15)"
+          : "rgba(2, 132, 199, 0.08)";
+        const colorFinalizada = getComputedStyle(document.documentElement)
+          .getPropertyValue("--c-finalizada")
+          .trim();
+        const bgFinalizada = isDark
+          ? "rgba(74, 222, 128, 0.15)"
+          : "rgba(21, 128, 61, 0.08)";
+
+        document.getElementById("osChartSub").textContent = d.subO;
+        document.getElementById("revChartSub").textContent = d.subR;
+        if (osCh) osCh.destroy();
+        if (rvCh) rvCh.destroy();
+        const base = {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: {
+              grid: { color: gc, drawBorder: false },
+              ticks: { color: tc, font: { size: 11, family: "var(--font)" } },
+            },
+            y: {
+              grid: { color: gc, drawBorder: false },
+              ticks: {
+                color: tc,
+                font: { size: 11, family: "var(--font)" },
+                callback: (v) => Math.round(v),
+              },
+            },
+          },
+        };
+
+        osCh = new Chart(document.getElementById("osChart"), {
+          type: "line",
+          data: {
+            labels: d.lbl,
+            datasets: [
+              {
+                data: d.d1,
+                borderColor: colorAberta,
+                backgroundColor: bgAberta,
+                tension: 0.4,
+                fill: true,
+                pointRadius: 4,
+                pointBackgroundColor: "#ffffff",
+                borderWidth: 2.5,
+              },
+              {
+                data: d.d2,
+                borderColor: colorFinalizada,
+                backgroundColor: bgFinalizada,
+                tension: 0.4,
+                fill: true,
+                pointRadius: 4,
+                pointBackgroundColor: "#ffffff",
+                borderWidth: 2.5,
+              },
+            ],
+          },
+          options: { ...base },
+        });
+        rvCh = new Chart(document.getElementById("revChart"), {
+          type: "bar",
+          data: {
+            labels: d.lbl,
+            datasets: [
+              {
+                data: d.rV,
+                backgroundColor: isDark ? "#facc15" : "#EAB308",
+                borderRadius: 6,
+              },
+            ],
+          },
+          options: {
+            ...base,
+            scales: {
+              ...base.scales,
+              y: { ...base.scales.y, callback: (v) => "R$" + v / 1000 + "k" },
+            },
+          },
+        });
+      }
+
+      function setPage(n, el) {
+        document.getElementById("pageTitle").textContent = n;
+        document
+          .querySelectorAll(".sb-item")
+          .forEach((i) => i.classList.remove("active"));
+        el.classList.add("active");
+        const dc = document.getElementById("dashContent"),
+          oc = document.getElementById("osContent"),
+          ddc = document.getElementById("dadosContent"),
+          es = document.getElementById("emptyState"),
+          hf = document.getElementById("headerFilters");
+        dc.style.display = "none";
+        oc.style.display = "none";
+        ddc.style.display = "none";
+        es.style.display = "none";
+
+        if (n === "Dashboard") {
+          dc.style.display = "block";
+          hf.style.display = "inline-block";
+          setTimeout(() => buildCharts(DATA[curP]), 50);
+        } else if (n === "Ordens de Serviço") {
+          oc.style.display = "block";
+          hf.style.display = "none";
+        } else if (n === "Dados") {
+          ddc.style.display = "block";
+          hf.style.display = "none";
+        } else {
+          es.style.display = "flex";
+          hf.style.display = "none";
+          document.getElementById("emptyStateText").textContent =
+            `A seção de "${n}" está descrita na nossa documentação de Engenharia de Requisitos.`;
+        }
+      }
+
+      function switchDadosTab(tabName) {
+        document.getElementById("btnTabCura").classList.remove("active");
+        document.getElementById("btnTabPos").classList.remove("active");
+        document.getElementById("tabCuradoria").classList.remove("active");
+        document.getElementById("tabPosVenda").classList.remove("active");
+
+        if (tabName === "curadoria") {
+          document.getElementById("btnTabCura").classList.add("active");
+          document.getElementById("tabCuradoria").classList.add("active");
+        } else {
+          document.getElementById("btnTabPos").classList.add("active");
+          document.getElementById("tabPosVenda").classList.add("active");
+        }
+      }
+
+      function toggleFlt(e) {
+        e.stopPropagation();
+        document.getElementById("fltDd").classList.toggle("open");
+      }
+      function selectPeriod(p, el) {
+        curP = p;
+        document
+          .querySelectorAll(".flt-opt")
+          .forEach((o) => o.classList.remove("sel"));
+        el.classList.add("sel");
+        document.getElementById("fltDd").classList.remove("open");
+        const d = DATA[p];
+        renderUI(d);
+        buildCharts(d);
+      }
+      function refreshDash() {
+        const ic = document.getElementById("refreshIco");
+        ic.style.transform = "rotate(360deg)";
+        setTimeout(() => {
+          ic.style.transform = "";
+        }, 500);
+        const d = DATA[curP];
+        renderUI(d);
+        buildCharts(d);
+      }
+
+      document.addEventListener("click", (e) => {
+        const dd = document.getElementById("fltDd");
+        if (
+          dd &&
+          dd.classList.contains("open") &&
+          !e.target.closest(".flt-container")
+        )
+          dd.classList.remove("open");
+      });
+
+      renderUI(DATA[curP]);
+      setTimeout(() => buildCharts(DATA[curP]), 100);
+    </script>
+  </body>
+</html>
