@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Acesso do gestor ao sistema de gestão da Ophicina da Injeção Eletrônica." />
+    <title>Entrar | Ophicina</title>
+    <link rel="icon" href="img/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="css/estilos.css" />
+    <script src="js/tema.js"></script>
+    <script src="js/login.js" defer></script>
+  </head>
+  <body>
+    <div class="pagina-login">
+      <header class="login-apresentacao">
+        <svg class="sr-only" aria-hidden="true" focusable="false">
+          <!-- bico injetor usado no lugar da letra "I" do logotipo -->
+          <symbol id="injetor" viewBox="0 0 12 40">
+            <rect x="2.5" y="0" width="7" height="6" rx="1.5" fill="#E04828" />
+            <rect x="0" y="5" width="12" height="22" rx="3.2" fill="currentColor" />
+            <path d="M3 27h6l-1.6 9h-2.8z" fill="currentColor" />
+            <rect x="4.8" y="37.5" width="2.4" height="2.5" rx="1" fill="currentColor" />
+          </symbol>
+        </svg>
+        <a class="logotipo" href="index.html" aria-label="Ophicina da Injeção Eletrônica">
+          <span class="logotipo-nome" aria-hidden="true">OPH<svg class="letra-injetor" viewBox="0 0 12 40"><use href="#injetor" /></svg>C<svg class="letra-injetor" viewBox="0 0 12 40"><use href="#injetor" /></svg>NA</span>
+          <span class="logotipo-descricao" aria-hidden="true">da Injeção Eletrônica, desde 2003</span>
+        </a>
+
+        <figure>
+          <span class="faixa"></span>
+          <blockquote>
+            <p>Atender o cliente para que o carro dele saia daqui em perfeito estado.</p>
+          </blockquote>
+          <figcaption>Érica Lima, proprietária</figcaption>
+        </figure>
+
+        <address>Av. João Aranha, 953/965, Campinas/SP<br />(19) 3833-4958</address>
+      </header>
+
+      <main class="login-formulario" id="conteudo">
+        <div class="login-caixa">
+          <div>
+            <h1>Entrar no sistema</h1>
+            <p class="introducao">Área do gestor: ordens de serviço, equipe, clientes e curadoria da base de conhecimento.</p>
+          </div>
+
+          <form class="formulario" id="formulario-login">
+            <div class="campo">
+              <label for="email">E-mail <span class="obrigatorio">*</span></label>
+              <input type="email" id="email" required autocomplete="username" placeholder="nome@ophicina.com.br" />
+            </div>
+            <div class="campo">
+              <label for="senha">Senha <span class="obrigatorio">*</span></label>
+              <div class="campo-senha">
+                <input type="password" id="senha" required minlength="8" maxlength="64" autocomplete="current-password" />
+                <button type="button" class="botao-icone" id="mostrar-senha" aria-pressed="false" title="Mostrar senha">
+                  <img class="icone" src="img/icones/eye.svg" alt="Mostrar senha" />
+                </button>
+              </div>
+              <small class="dica">Mínimo de 8 caracteres.</small>
+            </div>
+            <div class="linha-entre">
+              <label class="opcao"><input type="checkbox" id="lembrar" /> Manter conectado</label>
+              <button type="button" class="link" id="abrir-recuperacao" aria-expanded="false" aria-controls="formulario-recuperacao">Esqueci minha senha</button>
+            </div>
+            <button type="submit" class="botao botao-primario">Entrar</button>
+          </form>
+
+          <form class="formulario recuperacao" id="formulario-recuperacao" hidden>
+            <h2>Recuperar senha</h2>
+            <p class="dica">Enviaremos um link de redefinição para o e-mail cadastrado.</p>
+            <div class="campo">
+              <label for="email-recuperacao">E-mail cadastrado</label>
+              <input type="email" id="email-recuperacao" required autocomplete="email" />
+            </div>
+            <div class="acoes-formulario">
+              <button type="button" class="botao botao-secundario" id="cancelar-recuperacao">Cancelar</button>
+              <button type="submit" class="botao botao-primario">Enviar link</button>
+            </div>
+            <p class="mensagem-formulario" id="mensagem-recuperacao" role="status"></p>
+          </form>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

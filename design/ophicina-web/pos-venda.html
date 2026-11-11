@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Envio dos serviços concluídos ao pós-venda e avaliações dos clientes." />
+    <title>Pós-venda | Ophicina</title>
+    <link rel="icon" href="img/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="css/estilos.css" />
+    <script src="js/tema.js"></script>
+    <script src="js/dados.js" defer></script>
+    <script src="js/comum.js" defer></script>
+    <script src="js/pos-venda.js" defer></script>
+  </head>
+  <body>
+    <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+    <div class="aplicacao">
+      <nav class="menu-lateral" aria-label="Menu principal">
+        <a class="marca" href="painel.html">
+          <img class="marca-icone" src="img/logo.svg" alt="" width="36" height="36" />
+          <span>
+            <span class="marca-nome">Ophicina</span>
+            <span class="marca-descricao">Injeção Eletrônica</span>
+          </span>
+        </a>
+        <ul>
+          <li>
+            <a class="item-menu" href="painel.html" title="Painel">
+              <img class="icone" src="img/icones/layout-dashboard.svg" alt="" /><span class="texto-item">Painel</span>
+            </a>
+          </li>
+          <li>
+            <a class="item-menu" href="ordens-servico.html" title="Ordens de serviço">
+              <img class="icone" src="img/icones/clipboard-list.svg" alt="" /><span class="texto-item">Ordens de serviço</span>
+            </a>
+          </li>
+          <li>
+            <a class="item-menu" href="clientes.html" title="Clientes">
+              <img class="icone" src="img/icones/car.svg" alt="" /><span class="texto-item">Clientes</span>
+            </a>
+          </li>
+          <li>
+            <a class="item-menu" href="colaboradores.html" title="Colaboradores">
+              <img class="icone" src="img/icones/users.svg" alt="" /><span class="texto-item">Colaboradores</span>
+            </a>
+          </li>
+          <li>
+            <a class="item-menu" href="curadoria.html" title="Curadoria">
+              <img class="icone" src="img/icones/brain.svg" alt="" /><span class="texto-item">Curadoria</span>
+            </a>
+          </li>
+          <li>
+            <a class="item-menu" href="pos-venda.html" title="Pós-venda" aria-current="page">
+              <img class="icone" src="img/icones/star.svg" alt="" /><span class="texto-item">Pós-venda</span>
+            </a>
+          </li>
+        </ul>
+        <a class="item-menu item-sair" href="index.html" title="Sair">
+          <img class="icone" src="img/icones/logout.svg" alt="" /><span class="texto-item">Sair</span>
+        </a>
+      </nav>
+
+      <div class="area-principal">
+        <header class="topo">
+          <h1>Pós-venda</h1>
+          <div class="topo-acoes">
+            <button type="button" class="botao-icone" id="botao-privacidade" aria-pressed="false" title="Ocultar dados sensíveis">
+              <img class="icone" src="img/icones/eye.svg" alt="Ocultar dados sensíveis" />
+            </button>
+            <button type="button" class="botao-icone" id="botao-tema" aria-pressed="false" title="Alternar tema escuro">
+              <img class="icone" src="img/icones/moon.svg" alt="Alternar tema escuro" />
+            </button>
+            <details class="menu-suspenso">
+              <summary class="botao-icone" title="Pendências">
+                <img class="icone" src="img/icones/bell.svg" alt="Pendências" />
+                <span class="contador" id="contador-pendencias" hidden>0</span>
+              </summary>
+              <div class="menu-suspenso-painel">
+                <h2>Pendências</h2>
+                <ul id="lista-pendencias"></ul>
+              </div>
+            </details>
+            <details class="menu-suspenso perfil">
+              <summary>
+                <span class="avatar" aria-hidden="true">ÉL</span>
+                <span class="nome-perfil sensivel">Érica Lima</span>
+                <img class="icone" src="img/icones/chevron-down.svg" alt="" />
+              </summary>
+              <div class="menu-suspenso-painel">
+                <h2>Gestora</h2>
+                <ul>
+                  <li><a href="index.html">Sair do sistema</a></li>
+                </ul>
+              </div>
+            </details>
+          </div>
+        </header>
+
+        <main class="conteudo" id="conteudo">
+          <ul class="indicadores">
+            <li class="cartao indicador">
+              <h2><img class="icone" src="img/icones/star.svg" alt="" />Satisfação (1 a 5)</h2>
+              <p class="valor sensivel">4,7</p>
+              <p class="tendencia neutra sensivel">— estável</p>
+            </li>
+            <li class="cartao indicador">
+              <h2><img class="icone" src="img/icones/message-circle.svg" alt="" />Avaliações recebidas</h2>
+              <p class="valor" id="total-avaliacoes">124</p>
+              <p class="tendencia positiva">▲ +18 no mês</p>
+            </li>
+            <li class="cartao indicador">
+              <h2><img class="icone" src="img/icones/trending-up.svg" alt="" />Distribuição das notas</h2>
+              <ul class="distribuicao">
+                <li class="bom"><span>5 estrelas</span><span class="progresso"><span class="largura-85"></span></span><span>85%</span></li>
+                <li><span>4 estrelas</span><span class="progresso"><span class="largura-11"></span></span><span>11%</span></li>
+                <li class="ruim"><span>1 a 3 estrelas</span><span class="progresso"><span class="largura-4"></span></span><span>4%</span></li>
+              </ul>
+            </li>
+          </ul>
+
+          <div class="duas-colunas">
+            <section class="cartao" aria-labelledby="titulo-envio">
+              <div class="cartao-cabecalho">
+                <h2 id="titulo-envio"><img class="icone" src="img/icones/upload.svg" alt="" />Serviços concluídos</h2>
+                <button type="button" class="botao botao-primario" id="exportar-csv">
+                  <img class="icone" src="img/icones/download.svg" alt="" /> Exportar pendentes (CSV)
+                </button>
+              </div>
+              <div class="tabela-rolagem">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">O.S.</th>
+                      <th scope="col">Cliente</th>
+                      <th scope="col">Veículo</th>
+                      <th scope="col">Abertura</th>
+                      <th scope="col">Envio ao pós-venda</th>
+                    </tr>
+                  </thead>
+                  <tbody id="corpo-finalizadas"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <aside class="cartao">
+              <form class="formulario" id="formulario-importacao">
+                <h2>Importar avaliações</h2>
+                <div class="campo">
+                  <label for="arquivo-avaliacoes">Arquivo enviado pelo pós-venda <span class="obrigatorio">*</span></label>
+                  <input type="file" id="arquivo-avaliacoes" accept=".csv" required />
+                  <small class="dica">Planilha .csv de até 1 MB.</small>
+                </div>
+                <p class="mensagem-formulario" id="mensagem-importacao" role="alert"></p>
+                <div class="acoes-formulario">
+                  <button type="submit" class="botao botao-primario"><img class="icone" src="img/icones/upload.svg" alt="" /> Importar</button>
+                </div>
+              </form>
+            </aside>
+          </div>
+
+          <section class="conteudo-secao" aria-labelledby="titulo-comentarios">
+            <h2 class="secao-titulo" id="titulo-comentarios">Comentários recentes</h2>
+            <div class="avaliacoes" id="lista-avaliacoes"></div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <button type="button" class="botao botao-assistente" id="abrir-assistente">
+      <img class="icone" src="img/icones/sparkles.svg" alt="" /> Assistente IA
+    </button>
+
+    <dialog class="assistente" id="assistente" aria-labelledby="assistente-titulo">
+      <div class="assistente-topo">
+        <h2 id="assistente-titulo"><img class="icone" src="img/icones/sparkles.svg" alt="" /> Assistente de diagnóstico</h2>
+        <button type="button" class="botao-icone" id="fechar-assistente" title="Fechar">
+          <img class="icone" src="img/icones/x.svg" alt="Fechar" />
+        </button>
+      </div>
+      <ol class="assistente-conversa" id="assistente-conversa" aria-live="polite">
+        <li class="mensagem-chat ia">Olá, Érica. Pergunte sobre um sintoma, um código de falha ou uma O.S. Eu procuro casos parecidos nos relatos que a oficina já aprovou.</li>
+      </ol>
+      <form class="assistente-formulario" id="assistente-formulario">
+        <label for="assistente-pergunta" class="sr-only">Sua pergunta</label>
+        <input type="text" id="assistente-pergunta" required minlength="3" maxlength="300" autocomplete="off"
+          placeholder="Ex.: o que fazer com o código P0420?" />
+        <button type="submit" class="botao botao-primario" title="Enviar pergunta">
+          <img class="icone" src="img/icones/send.svg" alt="Enviar" />
+        </button>
+      </form>
+    </dialog>
+  </body>
+</html>

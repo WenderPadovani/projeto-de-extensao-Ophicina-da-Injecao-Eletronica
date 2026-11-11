@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Quadro das ordens de serviço, da abertura à curadoria do relato técnico." />
+    <title>Ordens de serviço | Ophicina</title>
+    <link rel="icon" href="img/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="css/estilos.css" />
+    <script src="js/tema.js"></script>
+    <script src="js/dados.js" defer></script>
+    <script src="js/comum.js" defer></script>
+    <script src="js/ordens.js" defer></script>
+  </head>
+  <body>
+    <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+    <div class="aplicacao">
+      <nav class="menu-lateral" aria-label="Menu principal">
+        <a class="marca" href="painel.html">
+          <img class="marca-icone" src="img/logo.svg" alt="" width="36" height="36" />
+          <span>
+            <span class="marca-nome">Ophicina</span>
+            <span class="marca-descricao">Injeção Eletrônica</span>
+          </span>
+        </a>
+        <ul>
+          <li>
+            <a class="item-menu" href="painel.html" title="Painel">
+              <img class="icone" src="img/icones/layout-dashboard.svg" alt="" /><span class="texto-item">Painel</span>
+            </a>
+          </li>
+          <li>
+            <a class="item-menu" href="ordens-servico.html" title="Ordens de serviço" aria-current="page">
+              <img class="icone" src="img/icones/clipboard-list.svg" alt="" /><span class="texto-item">Ordens de serviço</span>
+            </a>
+          </li>
+          <li>
+            <a class="item-menu" href="clientes.html" title="Clientes">
+              <img class="icone" src="img/icones/car.svg" alt="" /><span class="texto-item">Clientes</span>
+            </a>
+          </li>
+          <li>
+            <a class="item-menu" href="colaboradores.html" title="Colaboradores">
+              <img class="icone" src="img/icones/users.svg" alt="" /><span class="texto-item">Colaboradores</span>
+            </a>
+          </li>
+          <li>
+            <a class="item-menu" href="curadoria.html" title="Curadoria">
+              <img class="icone" src="img/icones/brain.svg" alt="" /><span class="texto-item">Curadoria</span>
+            </a>
+          </li>
+          <li>
+            <a class="item-menu" href="pos-venda.html" title="Pós-venda">
+              <img class="icone" src="img/icones/star.svg" alt="" /><span class="texto-item">Pós-venda</span>
+            </a>
+          </li>
+        </ul>
+        <a class="item-menu item-sair" href="index.html" title="Sair">
+          <img class="icone" src="img/icones/logout.svg" alt="" /><span class="texto-item">Sair</span>
+        </a>
+      </nav>
+
+      <div class="area-principal">
+        <header class="topo">
+          <h1>Ordens de serviço</h1>
+          <div class="topo-acoes">
+            <button type="button" class="botao-icone" id="botao-privacidade" aria-pressed="false" title="Ocultar dados sensíveis">
+              <img class="icone" src="img/icones/eye.svg" alt="Ocultar dados sensíveis" />
+            </button>
+            <button type="button" class="botao-icone" id="botao-tema" aria-pressed="false" title="Alternar tema escuro">
+              <img class="icone" src="img/icones/moon.svg" alt="Alternar tema escuro" />
+            </button>
+            <details class="menu-suspenso">
+              <summary class="botao-icone" title="Pendências">
+                <img class="icone" src="img/icones/bell.svg" alt="Pendências" />
+                <span class="contador" id="contador-pendencias" hidden>0</span>
+              </summary>
+              <div class="menu-suspenso-painel">
+                <h2>Pendências</h2>
+                <ul id="lista-pendencias"></ul>
+              </div>
+            </details>
+            <details class="menu-suspenso perfil">
+              <summary>
+                <span class="avatar" aria-hidden="true">ÉL</span>
+                <span class="nome-perfil sensivel">Érica Lima</span>
+                <img class="icone" src="img/icones/chevron-down.svg" alt="" />
+              </summary>
+              <div class="menu-suspenso-painel">
+                <h2>Gestora</h2>
+                <ul>
+                  <li><a href="index.html">Sair do sistema</a></li>
+                </ul>
+              </div>
+            </details>
+          </div>
+        </header>
+
+        <main class="conteudo" id="conteudo">
+          <div class="barra-acoes">
+            <div class="campo">
+              <label for="filtro-os">Filtrar o quadro</label>
+              <div class="campo-busca">
+                <img class="icone" src="img/icones/search.svg" alt="" />
+                <input type="search" id="filtro-os" placeholder="Placa, cliente, número ou sintoma" />
+              </div>
+            </div>
+            <button type="button" class="botao botao-primario empurra" id="abrir-nova-os">
+              <img class="icone" src="img/icones/plus.svg" alt="" /> Nova ordem de serviço
+            </button>
+          </div>
+
+          <div class="quadro">
+            <section class="coluna coluna-aberta" aria-labelledby="titulo-aberta">
+              <h2 id="titulo-aberta">Abertas <span class="total" id="total-aberta">0</span></h2>
+              <div id="lista-aberta"></div>
+            </section>
+            <section class="coluna coluna-andamento" aria-labelledby="titulo-andamento">
+              <h2 id="titulo-andamento">Em andamento <span class="total" id="total-andamento">0</span></h2>
+              <div id="lista-andamento"></div>
+            </section>
+            <section class="coluna coluna-curadoria" aria-labelledby="titulo-curadoria">
+              <h2 id="titulo-curadoria">Aguardando curadoria <span class="total" id="total-curadoria">0</span></h2>
+              <div id="lista-curadoria"></div>
+            </section>
+            <section class="coluna coluna-finalizada" aria-labelledby="titulo-finalizada">
+              <h2 id="titulo-finalizada">Finalizadas <span class="total" id="total-finalizada">0</span></h2>
+              <div id="lista-finalizada"></div>
+            </section>
+          </div>
+
+          <dialog class="janela" id="janela-nova-os" aria-labelledby="titulo-nova-os">
+            <div class="janela-topo">
+              <h2 id="titulo-nova-os">Nova ordem de serviço</h2>
+              <button type="button" class="botao-icone" id="fechar-nova-os" title="Fechar sem salvar">
+                <img class="icone" src="img/icones/x.svg" alt="Fechar" />
+              </button>
+            </div>
+            <form class="formulario" id="formulario-os">
+              <div class="campos-lado-a-lado">
+                <div class="campo">
+                  <label for="os-cliente">Cliente <span class="obrigatorio">*</span></label>
+                  <select id="os-cliente" required>
+                    <option value="">Selecione o cliente</option>
+                  </select>
+                </div>
+                <div class="campo">
+                  <label for="os-veiculo">Veículo <span class="obrigatorio">*</span></label>
+                  <select id="os-veiculo" required disabled>
+                    <option value="">Escolha o cliente primeiro</option>
+                  </select>
+                  <small class="dica">Cliente novo? Cadastre na tela <a href="clientes.html">Clientes</a>.</small>
+                </div>
+              </div>
+
+              <div class="campo">
+                <label for="os-sintoma">Sintoma relatado pelo cliente <span class="obrigatorio">*</span></label>
+                <textarea id="os-sintoma" required minlength="15" maxlength="500"
+                  placeholder="Ex.: motor falha em alta rotação e a luz da injeção acende."></textarea>
+                <small class="dica" id="os-sintoma-contador">0 de 500 caracteres</small>
+              </div>
+
+              <fieldset>
+                <legend>Habilidades necessárias <span class="obrigatorio">*</span></legend>
+                <div class="opcoes" id="os-habilidades"></div>
+              </fieldset>
+
+              <div class="campos-lado-a-lado">
+                <div class="campo">
+                  <label for="os-mecanico">Mecânico responsável</label>
+                  <select id="os-mecanico">
+                    <option value="">Alocar depois</option>
+                  </select>
+                </div>
+                <div class="campo">
+                  <label for="os-previsao">Previsão de entrega <span class="obrigatorio">*</span></label>
+                  <input type="date" id="os-previsao" required />
+                </div>
+              </div>
+
+              <p class="mensagem-formulario" id="mensagem-os" role="alert"></p>
+
+              <div class="acoes-formulario">
+                <button type="button" class="botao botao-secundario" id="cancelar-nova-os">Cancelar</button>
+                <button type="submit" class="botao botao-primario">Abrir O.S.</button>
+              </div>
+            </form>
+          </dialog>
+        </main>
+      </div>
+    </div>
+
+    <button type="button" class="botao botao-assistente" id="abrir-assistente">
+      <img class="icone" src="img/icones/sparkles.svg" alt="" /> Assistente IA
+    </button>
+
+    <dialog class="assistente" id="assistente" aria-labelledby="assistente-titulo">
+      <div class="assistente-topo">
+        <h2 id="assistente-titulo"><img class="icone" src="img/icones/sparkles.svg" alt="" /> Assistente de diagnóstico</h2>
+        <button type="button" class="botao-icone" id="fechar-assistente" title="Fechar">
+          <img class="icone" src="img/icones/x.svg" alt="Fechar" />
+        </button>
+      </div>
+      <ol class="assistente-conversa" id="assistente-conversa" aria-live="polite">
+        <li class="mensagem-chat ia">Olá, Érica. Pergunte sobre um sintoma, um código de falha ou uma O.S. Eu procuro casos parecidos nos relatos que a oficina já aprovou.</li>
+      </ol>
+      <form class="assistente-formulario" id="assistente-formulario">
+        <label for="assistente-pergunta" class="sr-only">Sua pergunta</label>
+        <input type="text" id="assistente-pergunta" required minlength="3" maxlength="300" autocomplete="off"
+          placeholder="Ex.: o que fazer com o código P0420?" />
+        <button type="submit" class="botao botao-primario" title="Enviar pergunta">
+          <img class="icone" src="img/icones/send.svg" alt="Enviar" />
+        </button>
+      </form>
+    </dialog>
+  </body>
+</html>

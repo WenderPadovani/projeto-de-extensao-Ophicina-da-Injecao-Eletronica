@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Cadastro de clientes e veículos da oficina." />
+    <title>Clientes | Ophicina</title>
+    <link rel="icon" href="img/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="css/estilos.css" />
+    <script src="js/tema.js"></script>
+    <script src="js/dados.js" defer></script>
+    <script src="js/comum.js" defer></script>
+    <script src="js/clientes.js" defer></script>
+  </head>
+  <body>
+    <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+    <div class="aplicacao">
+      <nav class="menu-lateral" aria-label="Menu principal">
+        <a class="marca" href="painel.html">
+          <img class="marca-icone" src="img/logo.svg" alt="" width="36" height="36" />
+          <span>
+            <span class="marca-nome">Ophicina</span>
+            <span class="marca-descricao">Injeção Eletrônica</span>
+          </span>
+        </a>
+        <ul>
+          <li>
+            <a class="item-menu" href="painel.html" title="Painel">
+              <img class="icone" src="img/icones/layout-dashboard.svg" alt="" /><span class="texto-item">Painel</span>
+            </a>
+          </li>
+          <li>
+            <a class="item-menu" href="ordens-servico.html" title="Ordens de serviço">
+              <img class="icone" src="img/icones/clipboard-list.svg" alt="" /><span class="texto-item">Ordens de serviço</span>
+            </a>
+          </li>
+          <li>
+            <a class="item-menu" href="clientes.html" title="Clientes" aria-current="page">
+              <img class="icone" src="img/icones/car.svg" alt="" /><span class="texto-item">Clientes</span>
+            </a>
+          </li>
+          <li>
+            <a class="item-menu" href="colaboradores.html" title="Colaboradores">
+              <img class="icone" src="img/icones/users.svg" alt="" /><span class="texto-item">Colaboradores</span>
+            </a>
+          </li>
+          <li>
+            <a class="item-menu" href="curadoria.html" title="Curadoria">
+              <img class="icone" src="img/icones/brain.svg" alt="" /><span class="texto-item">Curadoria</span>
+            </a>
+          </li>
+          <li>
+            <a class="item-menu" href="pos-venda.html" title="Pós-venda">
+              <img class="icone" src="img/icones/star.svg" alt="" /><span class="texto-item">Pós-venda</span>
+            </a>
+          </li>
+        </ul>
+        <a class="item-menu item-sair" href="index.html" title="Sair">
+          <img class="icone" src="img/icones/logout.svg" alt="" /><span class="texto-item">Sair</span>
+        </a>
+      </nav>
+
+      <div class="area-principal">
+        <header class="topo">
+          <h1>Clientes</h1>
+          <div class="topo-acoes">
+            <button type="button" class="botao-icone" id="botao-privacidade" aria-pressed="false" title="Ocultar dados sensíveis">
+              <img class="icone" src="img/icones/eye.svg" alt="Ocultar dados sensíveis" />
+            </button>
+            <button type="button" class="botao-icone" id="botao-tema" aria-pressed="false" title="Alternar tema escuro">
+              <img class="icone" src="img/icones/moon.svg" alt="Alternar tema escuro" />
+            </button>
+            <details class="menu-suspenso">
+              <summary class="botao-icone" title="Pendências">
+                <img class="icone" src="img/icones/bell.svg" alt="Pendências" />
+                <span class="contador" id="contador-pendencias" hidden>0</span>
+              </summary>
+              <div class="menu-suspenso-painel">
+                <h2>Pendências</h2>
+                <ul id="lista-pendencias"></ul>
+              </div>
+            </details>
+            <details class="menu-suspenso perfil">
+              <summary>
+                <span class="avatar" aria-hidden="true">ÉL</span>
+                <span class="nome-perfil sensivel">Érica Lima</span>
+                <img class="icone" src="img/icones/chevron-down.svg" alt="" />
+              </summary>
+              <div class="menu-suspenso-painel">
+                <h2>Gestora</h2>
+                <ul>
+                  <li><a href="index.html">Sair do sistema</a></li>
+                </ul>
+              </div>
+            </details>
+          </div>
+        </header>
+
+        <main class="conteudo" id="conteudo">
+          <div class="duas-colunas">
+            <section class="cartao" aria-labelledby="titulo-tabela-clientes">
+              <div class="cartao-cabecalho">
+                <h2 id="titulo-tabela-clientes"><img class="icone" src="img/icones/car.svg" alt="" />Clientes cadastrados <span class="subtitulo" id="total-clientes"></span></h2>
+                <div class="campo-busca">
+                  <img class="icone" src="img/icones/search.svg" alt="" />
+                  <label class="sr-only" for="filtro-clientes">Buscar cliente</label>
+                  <input type="search" id="filtro-clientes" placeholder="Nome, placa ou modelo" />
+                </div>
+              </div>
+              <div class="tabela-rolagem">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Cliente</th>
+                      <th scope="col">Telefone</th>
+                      <th scope="col">Veículos</th>
+                      <th scope="col">O.S.</th>
+                    </tr>
+                  </thead>
+                  <tbody id="corpo-clientes"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <aside class="cartao">
+              <form class="formulario" id="formulario-cliente">
+                <h2>Cadastrar cliente</h2>
+                <div class="campo">
+                  <label for="cli-nome">Nome completo <span class="obrigatorio">*</span></label>
+                  <input type="text" id="cli-nome" required minlength="3" maxlength="80" autocomplete="off" />
+                </div>
+                <div class="campo">
+                  <label for="cli-telefone">Celular <span class="obrigatorio">*</span></label>
+                  <input type="tel" id="cli-telefone" required placeholder="(19) 99999-9999"
+                    pattern="\(\d{2}\) \d{4,5}-\d{4}" title="DDD e número, como (19) 99999-9999" />
+                </div>
+                <div class="campo">
+                  <label for="cli-email">E-mail <span class="dica">(opcional)</span></label>
+                  <input type="email" id="cli-email" autocomplete="off" />
+                </div>
+                <fieldset>
+                  <legend>Veículo</legend>
+                  <div class="campos-lado-a-lado">
+                    <div class="campo">
+                      <label for="cli-placa">Placa <span class="obrigatorio">*</span></label>
+                      <input type="text" id="cli-placa" required maxlength="7" placeholder="ABC1D23" autocomplete="off"
+                        pattern="[A-Za-z]{3}[0-9][A-Za-z0-9][0-9]{2}" title="Formato ABC1234 ou Mercosul ABC1D23" />
+                    </div>
+                    <div class="campo">
+                      <label for="cli-ano">Ano <span class="obrigatorio">*</span></label>
+                      <input type="number" id="cli-ano" required min="1980" />
+                    </div>
+                  </div>
+                  <div class="campo">
+                    <label for="cli-modelo">Marca e modelo <span class="obrigatorio">*</span></label>
+                    <input type="text" id="cli-modelo" required minlength="2" maxlength="60" placeholder="Ex.: Fiat Argo 1.3" autocomplete="off" />
+                  </div>
+                </fieldset>
+                <label class="opcao">
+                  <input type="checkbox" id="cli-lembretes" />
+                  Cliente autorizou receber lembretes de revisão pelo pós-venda
+                </label>
+                <p class="mensagem-formulario" id="mensagem-cliente" role="alert"></p>
+                <div class="acoes-formulario">
+                  <button type="reset" class="botao botao-secundario">Limpar</button>
+                  <button type="submit" class="botao botao-primario">Cadastrar cliente</button>
+                </div>
+              </form>
+            </aside>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <button type="button" class="botao botao-assistente" id="abrir-assistente">
+      <img class="icone" src="img/icones/sparkles.svg" alt="" /> Assistente IA
+    </button>
+
+    <dialog class="assistente" id="assistente" aria-labelledby="assistente-titulo">
+      <div class="assistente-topo">
+        <h2 id="assistente-titulo"><img class="icone" src="img/icones/sparkles.svg" alt="" /> Assistente de diagnóstico</h2>
+        <button type="button" class="botao-icone" id="fechar-assistente" title="Fechar">
+          <img class="icone" src="img/icones/x.svg" alt="Fechar" />
+        </button>
+      </div>
+      <ol class="assistente-conversa" id="assistente-conversa" aria-live="polite">
+        <li class="mensagem-chat ia">Olá, Érica. Pergunte sobre um sintoma, um código de falha ou uma O.S. Eu procuro casos parecidos nos relatos que a oficina já aprovou.</li>
+      </ol>
+      <form class="assistente-formulario" id="assistente-formulario">
+        <label for="assistente-pergunta" class="sr-only">Sua pergunta</label>
+        <input type="text" id="assistente-pergunta" required minlength="3" maxlength="300" autocomplete="off"
+          placeholder="Ex.: o que fazer com o código P0420?" />
+        <button type="submit" class="botao botao-primario" title="Enviar pergunta">
+          <img class="icone" src="img/icones/send.svg" alt="Enviar" />
+        </button>
+      </form>
+    </dialog>
+  </body>
+</html>

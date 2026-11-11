@@ -1,0 +1,2 @@
+Ícones do projeto Tabler Icons (https://tabler.io/icons), licença MIT.
+Copyright (c) 2020-2026 Paweł Kuna.
