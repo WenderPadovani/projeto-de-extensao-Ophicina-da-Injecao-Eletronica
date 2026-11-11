@@ -4,8 +4,9 @@ Este sistema está sendo desenvolvido como parte do Projeto de Extensão da Facu
 
 # Equipe:
 
-**Larissa Escobar Garcia Silveira**
-**Wender Egídio Paraíso Silva Filho**
+* **Larissa Escobar Garcia Silveira**
+
+* **Wender Egídio Paraíso Silva Filho**
 
 # Sistema de Gestão Inteligente
 
